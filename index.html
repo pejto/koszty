@@ -44,7 +44,23 @@
 
 <script>
   let wydatki = [];
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCv7px86fGvj5dH2Wox5K1U4mA020cDwxw",
+  authDomain: "koszty-wspolne-2026.firebaseapp.com",
+  projectId: "koszty-wspolne-2026",
+  storageBucket: "koszty-wspolne-2026.firebasestorage.app",
+  messagingSenderId: "927862585144",
+  appId: "1:927862585144:web:fa186f960154e725de73cd"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
   document.getElementById("data").valueAsDate = new Date();
 
   function dodaj() {
