@@ -8,90 +8,125 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<style>
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    background: #111827;          /* ciemnoszary */
-    color: #f3f4f6;               /* jasny tekst */
-  }
-  .container {
-    max-width: 540px;
-    margin: 0 auto;
-    padding: 24px;
-    background: #1f2937;          /* ciemne tło karty */
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  }
-  input, select, button {
-    width: 100%;
-    padding: 16px;                /* większe pola */
-    margin: 12px 0;               /* większe odstępy pionowe */
-    border-radius: 10px;
-    border: 1px solid #4b5563;
-    font-size: 1.1rem;
-    background: #374151;
-    color: #f3f4f6;
-  }
-  input::placeholder {
-    color: #9ca3af;
-  }
-  select {
-    appearance: none;
-    background: #374151 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 1rem center/1.5em;
-  }
-  button.bg-blue-600 {
-    background: #3b82f6;
-    color: white;
-    font-weight: 600;
-    border: none;
-    padding: 16px;
-    font-size: 1.1rem;
-  }
-  button.bg-blue-600:hover {
-    background: #2563eb;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 24px;
-    background: #1f2937;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  th, td {
-    padding: 14px 12px;
-    text-align: left;
-    border-bottom: 1px solid #374151;
-  }
-  th {
-    background: #111827;
-    font-weight: 600;
-    color: #e5e7eb;
-  }
-  .delete {
-    color: #f87171;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1.4rem;
-  }
-  .delete:hover {
-    color: #ef4444;
-  }
-  #suma {
-    background: #111827;
-    padding: 16px;
-    border-radius: 10px;
-    margin: 20px 0;
-    text-align: center;
-    font-size: 1.15rem;
-  }
-</style>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;           /* bardzo ciemny granatowo-szary */
+      color: #f1f5f9;                /* jasny biały / bardzo jasnoszary */
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px 0;
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #1e293b;           /* ciemniejsze tło karty */
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    h1, h2, p, th, td, label, .suma-line {
+      color: #f1f5f9 !important;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 16px 18px;
+      margin: 16px 0;                /* większe odstępy między polami */
+      border-radius: 10px;
+      border: 1px solid #475569;
+      font-size: 1.05rem;
+      background: #334155;
+      color: #f1f5f9;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+    }
+
+    select {
+      appearance: none;
+      background: #334155 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 1rem center/1.5em;
+    }
+
+    button.bg-blue-600 {
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 16px;
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    button.bg-blue-600:hover {
+      background: #2563eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 28px;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+      color: #f1f5f9;
+    }
+
+    th {
+      background: #0f172a;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .delete {
+      color: #f87171;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.4rem;
+      padding: 0 8px;
+    }
+
+    .delete:hover {
+      color: #ef4444;
+    }
+
+    #suma {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 10px;
+      margin: 24px 0;
+      text-align: center;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      border: 1px solid #334155;
+    }
+
+    .suma-line strong {
+      color: #60a5fa;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container bg-white rounded-xl shadow-md p-6">
+<div class="container">
 
-  <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Koszty wspólne</h1>
+  <h1 class="text-4xl font-bold text-center mb-10">Koszty wspólne</h1>
 
   <input id="kwota" placeholder="Kwota (np. 123,45 lub 123.45)" type="text">
   <input id="opis"  placeholder="Opis (opcjonalnie)">
@@ -102,12 +137,14 @@
     <option value="P">P</option>
   </select>
 
-  <button onclick="dodaj()" class="bg-blue-600 mt-4">Zapisz koszt</button>
+  <button onclick="dodaj()" class="bg-blue-600">Zapisz koszt</button>
 
-  <h2 class="text-xl font-semibold mt-8 mb-3 text-gray-700">Lista wydatków</h2>
+  <h2 class="text-2xl font-semibold mt-12 mb-4">Lista wydatków</h2>
 
-  <div id="suma" class="text-center font-semibold text-lg mb-4 text-gray-800 bg-gray-50 p-3 rounded-lg">
-    Razem: 0,00 zł<br>K: 0,00 zł<br>P: 0,00 zł
+  <div id="suma">
+    Razem: <strong>0,00 zł</strong><br>
+    K: <strong>0,00 zł</strong><br>
+    P: <strong>0,00 zł</strong>
   </div>
 
   <table id="tabela">
@@ -123,158 +160,155 @@
     <tbody id="tbody"></tbody>
   </table>
 
-  <div class="mt-8 flex gap-3 justify-center">
-    <button onclick="pobierzCSV()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">CSV</button>
-    <button onclick="pobierzTXT()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">TXT</button>
+  <div class="mt-10 flex gap-4 justify-center">
+    <button onclick="pobierzCSV()" class="bg-gray-700 text-white px-5 py-3 rounded-lg text-base">Pobierz CSV</button>
+    <button onclick="pobierzTXT()" class="bg-gray-700 text-white px-5 py-3 rounded-lg text-base">Pobierz TXT</button>
   </div>
 
 </div>
 
 <script>
-  // ────────────────────────────────────────────────
-  //   Firebase konfiguracja (Twoja własna)
-  // ────────────────────────────────────────────────
-  const firebaseConfig = {
-    apiKey: "AIzaSyCv7px86fGvj5dH2Wox5K1U4mA020cDwxw",
-    authDomain: "koszty-wspolne-2026.firebaseapp.com",
-    projectId: "koszty-wspolne-2026",
-    storageBucket: "koszty-wspolne-2026.firebasestorage.app",
-    messagingSenderId: "927862585144",
-    appId: "1:927862585144:web:fa186f960154e725de73cd"
-  };
+// ────────────────────────────────────────────────
+//   Firebase konfiguracja
+// ────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCv7px86fGvj5dH2Wox5K1U4mA020cDwxw",
+  authDomain: "koszty-wspolne-2026.firebaseapp.com",
+  projectId: "koszty-wspolne-2026",
+  storageBucket: "koszty-wspolne-2026.firebasestorage.app",
+  messagingSenderId: "927862585144",
+  appId: "1:927862585144:web:fa186f960154e725de73cd"
+};
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const expensesRef = db.collection("wydatki");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const expensesRef = db.collection("wydatki");
 
-  let wydatki = [];
+let wydatki = [];
 
-  // Ustaw dzisiejszą datę domyślnie
-  document.getElementById("data").valueAsDate = new Date();
+// Domyślna dzisiejsza data
+document.getElementById("data").valueAsDate = new Date();
 
-  // ─── Dodawanie ───────────────────────────────────
-  async function dodaj() {
-    const kwotaStr = document.getElementById("kwota").value.trim().replace(",", ".");
-    const kwota = parseFloat(kwotaStr);
-    const opis  = document.getElementById("opis").value.trim() || "—";
-    const data  = document.getElementById("data").value || new Date().toISOString().split("T")[0];
-    const kto   = document.getElementById("kto").value;
+// ─── Dodawanie ───────────────────────────────────
+async function dodaj() {
+  const kwotaStr = document.getElementById("kwota").value.trim().replace(",", ".");
+  const kwota = parseFloat(kwotaStr);
+  const opis  = document.getElementById("opis").value.trim() || "—";
+  const data  = document.getElementById("data").value || new Date().toISOString().split("T")[0];
+  const kto   = document.getElementById("kto").value;
 
-    if (!kwota || isNaN(kwota)) {
-      alert("Wpisz poprawną kwotę");
-      return;
-    }
-
-    try {
-      await expensesRef.add({
-        data: data,
-        opis: opis,
-        kwota: kwota,
-        kto: kto,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // czyść pola
-      document.getElementById("kwota").value = "";
-      document.getElementById("opis").value  = "";
-      document.getElementById("kto").value   = "";
-    } catch (err) {
-      console.error("Błąd zapisu:", err);
-      alert("Nie udało się zapisać – sprawdź konsolę (F12)");
-    }
+  if (!kwota || isNaN(kwota)) {
+    alert("Wpisz poprawną kwotę");
+    return;
   }
 
-  // ─── Usuwanie ────────────────────────────────────
-  async function usun(id) {
-    if (!confirm("Na pewno usunąć?")) return;
-    try {
-      await expensesRef.doc(id).delete();
-    } catch (err) {
-      console.error("Błąd usuwania:", err);
-      alert("Nie udało się usunąć");
-    }
-  }
-
-  // ─── Wyświetlanie + sumy ─────────────────────────
-  function wyswietl() {
-    const tbody = document.getElementById("tbody");
-    tbody.innerHTML = "";
-
-    let sumaTotal = 0;
-    let sumaK = 0;
-    let sumaP = 0;
-
-    wydatki.forEach(w => {
-      sumaTotal += w.kwota;
-      if (w.kto === "K") sumaK += w.kwota;
-      if (w.kto === "P") sumaP += w.kwota;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${w.data}</td>
-        <td>${w.opis}</td>
-        <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
-        <td class="text-center font-bold">${w.kto || "—"}</td>
-        <td class="text-center"><span class="delete" onclick="usun('${w.id}')">×</span></td>
-      `;
-      tbody.appendChild(tr);
+  try {
+    await expensesRef.add({
+      data: data,
+      opis: opis,
+      kwota: kwota,
+      kto: kto,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    document.getElementById("suma").innerHTML = `
-      Razem: <strong>${sumaTotal.toFixed(2).replace(".", ",")} zł</strong><br>
-      K: <strong>${sumaK.toFixed(2).replace(".", ",")} zł</strong><br>
-      P: <strong>${sumaP.toFixed(2).replace(".", ",")} zł</strong>
+    document.getElementById("kwota").value = "";
+    document.getElementById("opis").value  = "";
+    document.getElementById("kto").value   = "";
+  } catch (err) {
+    console.error("Błąd:", err);
+    alert("Nie udało się zapisać – sprawdź konsolę (F12)");
+  }
+}
+
+// ─── Usuwanie ────────────────────────────────────
+async function usun(id) {
+  if (!confirm("Na pewno usunąć?")) return;
+  try {
+    await expensesRef.doc(id).delete();
+  } catch (err) {
+    console.error("Błąd usuwania:", err);
+  }
+}
+
+// ─── Wyświetlanie + sumy ─────────────────────────
+function wyswietl() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  let sumaTotal = 0;
+  let sumaK = 0;
+  let sumaP = 0;
+
+  wydatki.forEach(w => {
+    sumaTotal += w.kwota;
+    if (w.kto === "K") sumaK += w.kwota;
+    if (w.kto === "P") sumaP += w.kwota;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${w.data}</td>
+      <td>${w.opis}</td>
+      <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
+      <td class="text-center font-bold">${w.kto || "—"}</td>
+      <td class="text-center"><span class="delete" onclick="usun('${w.id}')">×</span></td>
     `;
-  }
-
-  // ─── Nasłuchiwanie zmian w bazie (realtime) ──────
-  expensesRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
-    wydatki = [];
-    snapshot.forEach(doc => {
-      const d = doc.data();
-      wydatki.push({
-        id: doc.id,
-        data: d.data,
-        opis: d.opis,
-        kwota: d.kwota,
-        kto: d.kto || ""
-      });
-    });
-    wyswietl();
-  }, err => {
-    console.error("Błąd nasłuchu:", err);
-    alert("Problem z połączeniem z bazą – sprawdź konsolę");
+    tbody.appendChild(tr);
   });
 
-  // ─── Eksport ─────────────────────────────────────
-  function pobierzCSV() {
-    if (wydatki.length === 0) return alert("Brak danych do eksportu");
-    let csv = "Data;Opis;Kwota;Kto\n";
-    wydatki.forEach(w => {
-      csv += `${w.data};${w.opis.replace(/;/g,"")};${w.kwota.toFixed(2).replace(".", ",")};${w.kto}\n`;
-    });
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "koszty.csv";
-    a.click();
-  }
+  document.getElementById("suma").innerHTML = `
+    Razem: <strong>${sumaTotal.toFixed(2).replace(".", ",")} zł</strong><br>
+    K: <strong>${sumaK.toFixed(2).replace(".", ",")} zł</strong><br>
+    P: <strong>${sumaP.toFixed(2).replace(".", ",")} zł</strong>
+  `;
+}
 
-  function pobierzTXT() {
-    if (wydatki.length === 0) return alert("Brak danych do eksportu");
-    let txt = "Data       Opis                           Kwota     Kto\n";
-    txt += "------------------------------------------------------------\n";
-    wydatki.forEach(w => {
-      txt += `${w.data}  ${w.opis.padEnd(30).slice(0,30)}  ${w.kwota.toFixed(2).replace(".", ",").padStart(8)}  ${w.kto}\n`;
+// ─── Real-time nasłuch ───────────────────────────
+expensesRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
+  wydatki = [];
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    wydatki.push({
+      id: doc.id,
+      data: d.data,
+      opis: d.opis,
+      kwota: d.kwota,
+      kto: d.kto || ""
     });
-    const blob = new Blob([txt], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "koszty.txt";
-    a.click();
-  }
+  });
+  wyswietl();
+}, err => {
+  console.error("Błąd nasłuchu:", err);
+});
+
+// ─── Eksport ─────────────────────────────────────
+function pobierzCSV() {
+  if (wydatki.length === 0) return alert("Brak danych");
+  let csv = "Data;Opis;Kwota;Kto\n";
+  wydatki.forEach(w => {
+    csv += `${w.data};${w.opis.replace(/;/g,"")};${w.kwota.toFixed(2).replace(".", ",")};${w.kto}\n`;
+  });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "koszty.csv";
+  a.click();
+}
+
+function pobierzTXT() {
+  if (wydatki.length === 0) return alert("Brak danych");
+  let txt = "Data       Opis                           Kwota     Kto\n";
+  txt += "------------------------------------------------------------\n";
+  wydatki.forEach(w => {
+    txt += `${w.data}  ${w.opis.padEnd(30).slice(0,30)}  ${w.kwota.toFixed(2).replace(".", ",").padStart(8)}  ${w.kto}\n`;
+  });
+  const blob = new Blob([txt], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "koszty.txt";
+  a.click();
+}
 
 </script>
 
