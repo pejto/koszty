@@ -1,0 +1,2 @@
+# koszty
+wspólne koszty
