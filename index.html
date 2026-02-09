@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koszty Wspólne</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f3f4f6; }
+    .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
+    button { background: #3b82f6; color: white; font-weight: bold; border: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+    .delete { color: red; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="text-3xl font-bold text-center mb-6">Koszty wspólne</h1>
+
+  <input id="kwota"    placeholder="Kwota (np. 123.45 lub 123,45)" type="text">
+  <input id="opis"     placeholder="Opis (opcjonalnie)">
+  <input id="data"     type="date">
+
+  <button onclick="dodaj()">Zapisz koszt</button>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">Lista wydatków</h2>
+  <p id="suma" class="text-lg font-bold text-red-600">Suma: 0,00 zł</p>
+
+  <table id="tabela">
+    <thead>
+      <tr><th>Data</th><th>Opis</th><th class="text-right">Kwota</th><th></th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="mt-6 flex gap-4">
+    <button onclick="pobierzCSV()" class="bg-gray-600">Pobierz CSV</button>
+    <button onclick="pobierzTXT()" class="bg-gray-600">Pobierz TXT</button>
+  </div>
+</div>
+
+<script>
+  let wydatki = [];
+
+  document.getElementById("data").valueAsDate = new Date();
+
+  function dodaj() {
+    const kwotaStr = document.getElementById("kwota").value.trim().replace(",", ".");
+    const kwota = parseFloat(kwotaStr);
+    const opis = document.getElementById("opis").value.trim() || "—";
+    const data = document.getElementById("data").value || new Date().toISOString().split("T")[0];
+
+    if (!kwota || isNaN(kwota)) {
+      alert("Podaj poprawną kwotę");
+      return;
+    }
+
+    wydatki.push({ data, opis, kwota });
+    wyswietl();
+    zapiszLokalnie();
+
+    document.getElementById("kwota").value = "";
+    document.getElementById("opis").value = "";
+  }
+
+  function usun(idx) {
+    if (confirm("Na pewno usunąć?")) {
+      wydatki.splice(idx, 1);
+      wyswietl();
+      zapiszLokalnie();
+    }
+  }
+
+  function wyswietl() {
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+    let suma = 0;
+
+    wydatki.forEach((w, i) => {
+      suma += w.kwota;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${w.data}</td>
+        <td>${w.opis}</td>
+        <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
+        <td><span class="delete" onclick="usun(${i})">×</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("suma").textContent = `Suma: ${suma.toFixed(2).replace(".", ",")} zł`;
+  }
+
+  function zapiszLokalnie() {
+    localStorage.setItem("wspolne_koszty", JSON.stringify(wydatki));
+  }
+
+  function wczytajLokalnie() {
+    const dane = localStorage.getItem("wspolne_koszty");
+    if (dane) {
+      wydatki = JSON.parse(dane);
+      wyswietl();
+    }
+  }
+
+  function pobierzCSV() {
+    if (wydatki.length === 0) return alert("Brak danych");
+    let csv = "Data;Opis;Kwota\n";
+    wydatki.forEach(w => {
+      csv += `${w.data};${w.opis.replace(/;/g,"")};${w.kwota.toFixed(2).replace(".", ",")}\n`;
+    });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "koszty.csv";
+    a.click();
+  }
+
+  function pobierzTXT() {
+    if (wydatki.length === 0) return alert("Brak danych");
+    let txt = "Data          Opis                          Kwota\n";
+    txt += "----------------------------------------------------\n";
+    wydatki.forEach(w => {
+      txt += `${w.data}   ${w.opis.padEnd(30)} ${w.kwota.toFixed(2).replace(".", ",")} zł\n`;
+    });
+    const blob = new Blob([txt], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "koszty.txt";
+    a.click();
+  }
+
+  // start
+  wczytajLokalnie();
+</script>
+
+</body>
+</html>
