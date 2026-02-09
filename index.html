@@ -5,116 +5,194 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Koszty Wspólne</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <style>
-    body { font-family: system-ui, sans-serif; background: #f3f4f6; }
-    .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
-    button { background: #3b82f6; color: white; font-weight: bold; border: none; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-    .delete { color: red; font-weight: bold; cursor: pointer; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f3f4f6; }
+    .container { max-width: 520px; margin: 0 auto; padding: 16px; }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+    }
+    button.bg-blue-600 { background: #2563eb; color: white; font-weight: 600; border: none; }
+    button.bg-blue-600:hover { background: #1d4ed8; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .delete { color: #ef4444; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
+    .delete:hover { color: #b91c1c; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1 class="text-3xl font-bold text-center mb-6">Koszty wspólne</h1>
+<div class="container bg-white rounded-xl shadow-md p-6">
 
-  <input id="kwota"    placeholder="Kwota (np. 123.45 lub 123,45)" type="text">
-  <input id="opis"     placeholder="Opis (opcjonalnie)">
-  <input id="data"     type="date">
+  <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Koszty wspólne</h1>
 
-  <button onclick="dodaj()">Zapisz koszt</button>
+  <input id="kwota" placeholder="Kwota (np. 123,45 lub 123.45)" type="text">
+  <input id="opis"  placeholder="Opis (opcjonalnie)">
+  <input id="data"  type="date">
+  <select id="kto">
+    <option value="">—</option>
+    <option value="K">K</option>
+    <option value="P">P</option>
+  </select>
 
-  <h2 class="text-xl font-semibold mt-8 mb-2">Lista wydatków</h2>
-  <p id="suma" class="text-lg font-bold text-red-600">Suma: 0,00 zł</p>
+  <button onclick="dodaj()" class="bg-blue-600 mt-4">Zapisz koszt</button>
+
+  <h2 class="text-xl font-semibold mt-8 mb-3 text-gray-700">Lista wydatków</h2>
+
+  <div id="suma" class="text-center font-semibold text-lg mb-4 text-gray-800 bg-gray-50 p-3 rounded-lg">
+    Razem: 0,00 zł<br>K: 0,00 zł<br>P: 0,00 zł
+  </div>
 
   <table id="tabela">
     <thead>
-      <tr><th>Data</th><th>Opis</th><th class="text-right">Kwota</th><th></th></tr>
+      <tr>
+        <th>Data</th>
+        <th>Opis</th>
+        <th class="text-right">Kwota</th>
+        <th class="text-center">Kto</th>
+        <th></th>
+      </tr>
     </thead>
     <tbody id="tbody"></tbody>
   </table>
 
-  <div class="mt-6 flex gap-4">
-    <button onclick="pobierzCSV()" class="bg-gray-600">Pobierz CSV</button>
-    <button onclick="pobierzTXT()" class="bg-gray-600">Pobierz TXT</button>
+  <div class="mt-8 flex gap-3 justify-center">
+    <button onclick="pobierzCSV()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">CSV</button>
+    <button onclick="pobierzTXT()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">TXT</button>
   </div>
+
 </div>
 
 <script>
+  // ────────────────────────────────────────────────
+  //   Firebase konfiguracja (Twoja własna)
+  // ────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyCv7px86fGvj5dH2Wox5K1U4mA020cDwxw",
+    authDomain: "koszty-wspolne-2026.firebaseapp.com",
+    projectId: "koszty-wspolne-2026",
+    storageBucket: "koszty-wspolne-2026.firebasestorage.app",
+    messagingSenderId: "927862585144",
+    appId: "1:927862585144:web:fa186f960154e725de73cd"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const expensesRef = db.collection("wydatki");
+
   let wydatki = [];
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCv7px86fGvj5dH2Wox5K1U4mA020cDwxw",
-  authDomain: "koszty-wspolne-2026.firebaseapp.com",
-  projectId: "koszty-wspolne-2026",
-  storageBucket: "koszty-wspolne-2026.firebasestorage.app",
-  messagingSenderId: "927862585144",
-  appId: "1:927862585144:web:fa186f960154e725de73cd"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  // Ustaw dzisiejszą datę domyślnie
   document.getElementById("data").valueAsDate = new Date();
 
-  function dodaj() {
+  // ─── Dodawanie ───────────────────────────────────
+  async function dodaj() {
     const kwotaStr = document.getElementById("kwota").value.trim().replace(",", ".");
     const kwota = parseFloat(kwotaStr);
-    const opis = document.getElementById("opis").value.trim() || "—";
-    const data = document.getElementById("data").value || new Date().toISOString().split("T")[0];
+    const opis  = document.getElementById("opis").value.trim() || "—";
+    const data  = document.getElementById("data").value || new Date().toISOString().split("T")[0];
+    const kto   = document.getElementById("kto").value;
 
     if (!kwota || isNaN(kwota)) {
-      alert("Podaj poprawną kwotę");
+      alert("Wpisz poprawną kwotę");
       return;
     }
 
-    wydatki.push({ data, opis, kwota });
-    wyswietl();
-    zapiszLokalnie();
+    try {
+      await expensesRef.add({
+        data: data,
+        opis: opis,
+        kwota: kwota,
+        kto: kto,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-    document.getElementById("kwota").value = "";
-    document.getElementById("opis").value = "";
-  }
-
-  function usun(idx) {
-    if (confirm("Na pewno usunąć?")) {
-      wydatki.splice(idx, 1);
-      wyswietl();
-      zapiszLokalnie();
+      // czyść pola
+      document.getElementById("kwota").value = "";
+      document.getElementById("opis").value  = "";
+      document.getElementById("kto").value   = "";
+    } catch (err) {
+      console.error("Błąd zapisu:", err);
+      alert("Nie udało się zapisać – sprawdź konsolę (F12)");
     }
   }
 
- function wyswietl() {
-  const tbody = document.getElementById("tbody");
-  tbody.innerHTML = "";
-  let suma = 0;
+  // ─── Usuwanie ────────────────────────────────────
+  async function usun(id) {
+    if (!confirm("Na pewno usunąć?")) return;
+    try {
+      await expensesRef.doc(id).delete();
+    } catch (err) {
+      console.error("Błąd usuwania:", err);
+      alert("Nie udało się usunąć");
+    }
+  }
 
-  wydatki.forEach(w => {
-    suma += w.kwota;
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${w.data}</td>
-      <td>${w.opis}</td>
-      <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
-      <td><span class="delete" onclick="usun('${w.id}')">×</span></td>
+  // ─── Wyświetlanie + sumy ─────────────────────────
+  function wyswietl() {
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    let sumaTotal = 0;
+    let sumaK = 0;
+    let sumaP = 0;
+
+    wydatki.forEach(w => {
+      sumaTotal += w.kwota;
+      if (w.kto === "K") sumaK += w.kwota;
+      if (w.kto === "P") sumaP += w.kwota;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${w.data}</td>
+        <td>${w.opis}</td>
+        <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
+        <td class="text-center font-bold">${w.kto || "—"}</td>
+        <td class="text-center"><span class="delete" onclick="usun('${w.id}')">×</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("suma").innerHTML = `
+      Razem: <strong>${sumaTotal.toFixed(2).replace(".", ",")} zł</strong><br>
+      K: <strong>${sumaK.toFixed(2).replace(".", ",")} zł</strong><br>
+      P: <strong>${sumaP.toFixed(2).replace(".", ",")} zł</strong>
     `;
-    tbody.appendChild(tr);
+  }
+
+  // ─── Nasłuchiwanie zmian w bazie (realtime) ──────
+  expensesRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
+    wydatki = [];
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      wydatki.push({
+        id: doc.id,
+        data: d.data,
+        opis: d.opis,
+        kwota: d.kwota,
+        kto: d.kto || ""
+      });
+    });
+    wyswietl();
+  }, err => {
+    console.error("Błąd nasłuchu:", err);
+    alert("Problem z połączeniem z bazą – sprawdź konsolę");
   });
 
-  document.getElementById("suma").textContent = `Suma: ${suma.toFixed(2).replace(".", ",")} zł`;
-}
-
+  // ─── Eksport ─────────────────────────────────────
   function pobierzCSV() {
-    if (wydatki.length === 0) return alert("Brak danych");
-    let csv = "Data;Opis;Kwota\n";
+    if (wydatki.length === 0) return alert("Brak danych do eksportu");
+    let csv = "Data;Opis;Kwota;Kto\n";
     wydatki.forEach(w => {
-      csv += `${w.data};${w.opis.replace(/;/g,"")};${w.kwota.toFixed(2).replace(".", ",")}\n`;
+      csv += `${w.data};${w.opis.replace(/;/g,"")};${w.kwota.toFixed(2).replace(".", ",")};${w.kto}\n`;
     });
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -125,11 +203,11 @@ const app = initializeApp(firebaseConfig);
   }
 
   function pobierzTXT() {
-    if (wydatki.length === 0) return alert("Brak danych");
-    let txt = "Data          Opis                          Kwota\n";
-    txt += "----------------------------------------------------\n";
+    if (wydatki.length === 0) return alert("Brak danych do eksportu");
+    let txt = "Data       Opis                           Kwota     Kto\n";
+    txt += "------------------------------------------------------------\n";
     wydatki.forEach(w => {
-      txt += `${w.data}   ${w.opis.padEnd(30)} ${w.kwota.toFixed(2).replace(".", ",")} zł\n`;
+      txt += `${w.data}  ${w.opis.padEnd(30).slice(0,30)}  ${w.kwota.toFixed(2).replace(".", ",").padStart(8)}  ${w.kto}\n`;
     });
     const blob = new Blob([txt], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -139,8 +217,6 @@ const app = initializeApp(firebaseConfig);
     a.click();
   }
 
-  // start
-  wczytajLokalnie();
 </script>
 
 </body>
