@@ -90,37 +90,25 @@ const app = initializeApp(firebaseConfig);
     }
   }
 
-  function wyswietl() {
-    const tbody = document.getElementById("tbody");
-    tbody.innerHTML = "";
-    let suma = 0;
+ function wyswietl() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  let suma = 0;
 
-    wydatki.forEach((w, i) => {
-      suma += w.kwota;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${w.data}</td>
-        <td>${w.opis}</td>
-        <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
-        <td><span class="delete" onclick="usun(${i})">×</span></td>
-      `;
-      tbody.appendChild(tr);
-    });
+  wydatki.forEach(w => {
+    suma += w.kwota;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${w.data}</td>
+      <td>${w.opis}</td>
+      <td class="text-right font-medium">${w.kwota.toFixed(2).replace(".", ",")} zł</td>
+      <td><span class="delete" onclick="usun('${w.id}')">×</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
 
-    document.getElementById("suma").textContent = `Suma: ${suma.toFixed(2).replace(".", ",")} zł`;
-  }
-
-  function zapiszLokalnie() {
-    localStorage.setItem("wspolne_koszty", JSON.stringify(wydatki));
-  }
-
-  function wczytajLokalnie() {
-    const dane = localStorage.getItem("wspolne_koszty");
-    if (dane) {
-      wydatki = JSON.parse(dane);
-      wyswietl();
-    }
-  }
+  document.getElementById("suma").textContent = `Suma: ${suma.toFixed(2).replace(".", ",")} zł`;
+}
 
   function pobierzCSV() {
     if (wydatki.length === 0) return alert("Brak danych");
